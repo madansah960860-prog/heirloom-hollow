@@ -1,0 +1,185 @@
+{
+  "store": "06-heirloom-hollow",
+  "storeName": "Heirloom Hollow Gifts",
+  "outDir": "assets/images",
+  "width": 1200,
+  "aspect": "4:3",
+  "quality": 78,
+  "fallbackPalette": [
+    "#452742",
+    "#F6EFE4",
+    "#B8912E"
+  ],
+  "_note": "Every image is pinned to an exact Wikimedia Commons file so the build is reproducible, and every alt description says what is actually in the photograph rather than what the product is. Commons has no photograph of a new retro-style tabletop radio (hhg-602), a modern printed recipe keeper (hhg-608), a large-print wall calendar (hhg-605) or an engraved walnut keepsake box (hhg-604); those four use the nearest honest subject and are on the pre-launch list to be replaced with real product photography before any ad runs. Two of them are photographs of genuinely old objects, which sits badly with this shop's own statement that nothing it sells is an antique — so they are a copy contradiction as well as a Merchant Center image-accuracy problem, not a cosmetic one.",
+  "items": [
+    {
+      "slug": "hero",
+      "commonsFile": "Albums Photo",
+      "queries": [
+        "photograph album",
+        "photo albums"
+      ],
+      "query": "photograph album",
+      "alt": "Several photograph albums stacked on a table."
+    },
+    {
+      "slug": "cat-write",
+      "commonsFile": "Businesswoman writing in a notebook closeup",
+      "queries": [
+        "person writing notebook",
+        "notebook"
+      ],
+      "query": "person writing notebook",
+      "alt": "A person sitting at a desk writing in a notebook."
+    },
+    {
+      "slug": "cat-keep",
+      "commonsFile": "Wooden chest (2024-04-02) 06",
+      "queries": [
+        "wooden chest"
+      ],
+      "query": "wooden chest",
+      "alt": "The corner of a wooden chest, its lid closed over metal fittings."
+    },
+    {
+      "slug": "cat-wall",
+      "commonsFile": "Aesthetic Picture Frame (154902183)",
+      "queries": [
+        "picture frame",
+        "framed photograph"
+      ],
+      "query": "picture frame",
+      "alt": "A small framed photograph hanging on a plain painted wall."
+    },
+    {
+      "slug": "cat-comfort",
+      "commonsFile": "Burning-candle",
+      "queries": [
+        "lit candle",
+        "candle flame"
+      ],
+      "query": "lit candle",
+      "alt": "A single lit candle burning against a dark background."
+    },
+    {
+      "slug": "hhg-601",
+      "commonsFile": "Blank Pages In An Open Notebook (4812269151)",
+      "queries": [
+        "open notebook blank pages",
+        "notebook"
+      ],
+      "query": "open notebook blank pages",
+      "alt": "An open notebook showing two blank pages."
+    },
+    {
+      "slug": "hhg-602",
+      "commonsFile": "1957 Old Radio (123716161)",
+      "queries": [
+        "wooden tabletop radio",
+        "vintage radio"
+      ],
+      "query": "wooden tabletop radio",
+      "alt": "The lit dial of a wooden-cased tabletop radio, printed with station names."
+    },
+    {
+      "slug": "hhg-603",
+      "commonsFile": "Digital photo frame with picture",
+      "queries": [
+        "digital photo frame",
+        "photo frame screen"
+      ],
+      "query": "digital photo frame",
+      "alt": "A digital photo frame standing upright, showing a photograph on its screen."
+    },
+    {
+      "slug": "hhg-604",
+      "commonsFile": "Bridal Box",
+      "queries": [
+        "keepsake box",
+        "presentation box"
+      ],
+      "query": "keepsake box",
+      "alt": "A brown presentation box opened flat, lined in cream."
+    },
+    {
+      "slug": "hhg-605",
+      "commonsFile": "50yearcalendar",
+      "queries": [
+        "perpetual calendar",
+        "calendar dates"
+      ],
+      "query": "perpetual calendar",
+      "alt": "A round brass perpetual calendar marked with rings of numbered dates."
+    },
+    {
+      "slug": "hhg-606",
+      "commonsFile": "Zygadlo family tree",
+      "queries": [
+        "family tree chart",
+        "genealogical chart"
+      ],
+      "query": "family tree chart",
+      "alt": "A printed genealogical chart branching across several generations of one family."
+    },
+    {
+      "slug": "hhg-607",
+      "commonsFile": "Hungarian family photo album, page 44",
+      "queries": [
+        "photo album page",
+        "album with mounted photographs"
+      ],
+      "query": "photo album page",
+      "alt": "A page from an old photograph album with prints held in mounted corners."
+    },
+    {
+      "slug": "hhg-608",
+      "commonsFile": "17th-18th century recipe book Wellcome L0074537",
+      "queries": [
+        "handwritten recipe book",
+        "recipe book open"
+      ],
+      "query": "handwritten recipe book",
+      "alt": "An open recipe book filled in by hand, both pages covered in writing."
+    },
+    {
+      "slug": "hhg-609",
+      "commonsFile": "Pressed flower",
+      "queries": [
+        "pressed flower",
+        "dried flower paper"
+      ],
+      "query": "pressed flower",
+      "alt": "A pressed and dried flower lying on the open page of a book."
+    },
+    {
+      "slug": "hhg-610",
+      "commonsFile": "Taschenlupe 1664",
+      "queries": [
+        "pocket magnifier",
+        "magnifying glass"
+      ],
+      "query": "pocket magnifier",
+      "alt": "A folding pocket magnifier with a round glass lens."
+    },
+    {
+      "slug": "hhg-611",
+      "commonsFile": "Yellow wax candle",
+      "queries": [
+        "beeswax candle",
+        "wax candle"
+      ],
+      "query": "beeswax candle",
+      "alt": "A rolled beeswax candle standing unlit in a small holder."
+    },
+    {
+      "slug": "hhg-612",
+      "commonsFile": "Cards -Deck Playing",
+      "queries": [
+        "deck of cards",
+        "playing cards"
+      ],
+      "query": "deck of cards",
+      "alt": "A deck of cards spread face down across a table."
+    }
+  ]
+}

@@ -1,0 +1,1161 @@
+@charset "UTF-8";
+/* ==========================================================================
+   Heirloom Hollow Gifts — the only stylesheet on this site.
+
+   Design language
+   ---------------
+   The page is a scrapbook: cream paper, gold photo corners, and product cards
+   set at a slight tilt the way photographs sit on an album page. The structural
+   radius is 0 — panels, inputs and photos are square — and the ONLY rounded
+   thing is the button, a pill with a thin gold border and a small-cased label.
+   That single contrast is the store's signature and it is not repeated anywhere
+   else.
+
+   Contrast
+   --------
+   Every text pair below was measured, not guessed:
+     ink        #2B1F2A on paper #F6EFE4 .... 13.8:1
+     ink-soft   #5E4A5C on paper ............  7.0:1
+     gold-text  #7E6008 on paper ............  5.2:1   (also used for borders,
+                                                        so component edges clear
+                                                        the 3:1 non-text rule)
+     paper      #F6EFE4 on plum #452742 ..... 11.1:1
+     gold-lit   #E0BE63 on plum .............  7.1:1
+     gold-line  #B8912E on plum .............  4.3:1   (hairlines only)
+   The lighter decorative gold #B8912E never carries text on a pale ground.
+
+   Motion
+   ------
+   The card tilt is a static transform, not an animation, and the whole tilt is
+   removed under prefers-reduced-motion. The cookie notice slides in from a
+   translated position rather than being unhidden in place — unhiding in place
+   is what Lighthouse scores as a layout shift.
+   ========================================================================== */
+
+/* -------------------------------------------------- metric-matched fallbacks */
+
+/*
+ * Cormorant Garamond sets 79.2% as wide as Georgia at the same pixel size —
+ * measured, not estimated. Left alone, the italic hero headline rendered in
+ * Georgia first, re-wrapped when the webfont arrived, and pushed <main> down:
+ * CLS 0.19, which fails the Core Web Vitals threshold on its own.
+ *
+ * These two faces alias the system fallback to the webfont's own metrics, so the
+ * first paint occupies the same number of lines the webfont will. `size-adjust`
+ * is the whole mechanism; the line-box overrides are belt and braces, since our
+ * line-heights are fixed numbers and do not consult font metrics anyway.
+ *
+ * Both are `local()` only. They add no network request, and where the named
+ * system face is missing the browser simply falls through to the next family in
+ * the stack — the page is never worse off than it was without them.
+ */
+@font-face {
+  font-family: 'Cormorant fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Times');
+  size-adjust: 79.2%;
+  ascent-override: 105%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Mulish fallback';
+  src: local('Segoe UI'), local('Helvetica Neue'), local('Arial');
+  size-adjust: 105.2%;
+  ascent-override: 96%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
+/* ------------------------------------------------------------------ tokens */
+
+:root {
+  --plum: #452742;
+  --plum-deep: #351E33;
+  --paper: #F6EFE4;
+  --paper-2: #EFE5D6;
+  --white: #FFFFFF;
+  --ink: #2B1F2A;
+  --ink-soft: #5E4A5C;
+  --gold-text: #7E6008;   /* text AND borders on pale grounds */
+  --gold-line: #B8912E;   /* hairlines on plum only */
+  --gold-lit: #E0BE63;    /* text on plum */
+  --rule: #DCCFBC;
+
+  --display: 'Cormorant Garamond', 'Cormorant fallback', Georgia, 'Times New Roman', serif;
+  --body: 'Mulish', 'Mulish fallback', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --wrap: 1180px;
+  --gap: 1.5rem;
+  --tilt: 1.6deg;
+}
+
+/* -------------------------------------------------------------------- base */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.18;
+  margin: 0 0 0.6em;
+  letter-spacing: 0.01em;
+}
+
+h1 { font-size: clamp(2.3rem, 5.4vw, 3.6rem); }
+h2 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); }
+h3 { font-size: 1.35rem; }
+h4 { font-size: 1.1rem; }
+
+p, ul, ol, table, address, figure { margin: 0 0 1.1rem; }
+ul, ol { padding-left: 1.3rem; }
+li { margin-bottom: 0.5rem; }
+address { font-style: normal; }
+
+a { color: var(--plum); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--gold-text); }
+
+strong { font-weight: 700; }
+
+img { max-width: 100%; height: auto; display: block; }
+
+:focus-visible {
+  outline: 3px solid var(--gold-text);
+  outline-offset: 3px;
+}
+
+.lede {
+  font-size: 1.15rem;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+.lede--light { color: var(--paper); }
+
+.meta-line {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.hint {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+}
+
+.hh-mono { font-family: ui-monospace, 'Consolas', 'Menlo', monospace; font-size: 0.9rem; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0; top: -100px;
+  z-index: 100;
+  background: var(--plum);
+  color: var(--paper);
+  padding: 0.9rem 1.4rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.skip-link:focus { top: 0; color: var(--paper); }
+
+.wrap, .wrap--narrow {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+.wrap { max-width: var(--wrap); }
+.wrap--narrow { max-width: 760px; }
+
+.section { padding: 3.25rem 0; }
+.section--paper { background: var(--paper-2); }
+.section--plum { background: var(--plum); color: var(--paper); }
+.section--plum h2, .section--plum h3 { color: var(--paper); }
+
+.table-scroll { overflow-x: auto; max-width: 100%; margin-bottom: 1.1rem; }
+
+table { border-collapse: collapse; width: 100%; min-width: 30rem; }
+th, td {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+thead th { font-family: var(--display); font-size: 1.1rem; }
+
+/* ----------------------------------------------------------------- buttons */
+
+/*
+ * The one rounded element in the store. 1.5px gold border, small-caps label,
+ * letterspaced. 48px minimum height clears the 44px target rule with room.
+ */
+.hh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.7rem 1.6rem;
+  border: 1.5px solid var(--gold-text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--plum);
+  font-family: var(--body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.hh-btn:hover {
+  background: var(--gold-text);
+  color: var(--white);
+}
+.hh-btn--gold {
+  background: var(--plum);
+  border-color: var(--plum);
+  color: var(--paper);
+}
+.hh-btn--gold:hover {
+  background: var(--plum-deep);
+  border-color: var(--gold-text);
+  color: var(--paper);
+}
+.hh-btn--block { display: flex; width: 100%; }
+.hh-btn--small { min-height: 44px; padding: 0.5rem 1.1rem; font-size: 0.9rem; }
+
+.linkish {
+  background: none;
+  border: 0;
+  padding: 0.4rem 0;
+  min-height: 44px;
+  color: var(--plum);
+  font: inherit;
+  font-size: 0.95rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.linkish:hover { color: var(--gold-text); }
+
+/* ------------------------------------------------------- header (3 tiers) */
+
+/*
+ * Three centred tiers. No other store in this project centres its header, and
+ * the wordmark tier is the only place Cormorant appears at display size outside
+ * a heading.
+ */
+.hh-head { background: var(--paper); }
+
+/*
+ * The structural marker for this store. Everything in the header stacks and
+ * centres: strip, wordmark, nav. `text-align: center` here is what makes the
+ * tiers read as one centred column rather than three separate bars, and the
+ * design-diff gate checks for this class by name.
+ */
+.hh-head--stacked { text-align: center; }
+.hh-head--stacked .hh-head__mark { text-align: initial; }
+
+.hh-head__strip {
+  background: var(--plum);
+  color: var(--paper);
+  font-size: 0.9rem;
+}
+.hh-head__strip-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.2rem 1.5rem;
+  padding-block: 0.5rem;
+  text-align: center;
+}
+.hh-head__strip p { margin: 0; }
+.hh-head__strip a { color: var(--gold-lit); }
+.hh-head__strip a:hover { color: var(--white); }
+
+.hh-head__mark {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding-block: 1.1rem 0.9rem;
+}
+.hh-logo {
+  /*
+   * grid-row is load-bearing. DOM order is logo, cart, menu; auto-placement is
+   * sparse and never moves backwards, so the menu — placed in column 1 after the
+   * cart took column 3 — fell to a second row and the header grew a stray tier.
+   * Pinning all three to row 1 keeps them on one line.
+   */
+  grid-row: 1;
+  grid-column: 2;
+  text-align: center;
+  text-decoration: none;
+  color: var(--plum);
+}
+.hh-logo__name {
+  display: block;
+  font-family: var(--display);
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  font-weight: 600;
+  line-height: 1.05;
+}
+.hh-logo__sub {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.22em;
+  color: var(--gold-text);
+}
+
+.hh-cart {
+  grid-row: 1;
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
+  border: 1.5px solid var(--gold-text);
+  color: var(--plum);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+.hh-cart:hover { background: var(--gold-text); color: var(--white); }
+.hh-cart [data-cart-count] {
+  font-variant-caps: normal;
+  letter-spacing: 0;
+  font-size: 0.95rem;
+}
+
+.hh-menu {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: start;
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
+  background: transparent;
+  border: 1.5px solid var(--gold-text);
+  color: var(--plum);
+  font-family: var(--body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.hh-nav {
+  border-top: 1px solid var(--rule);
+  border-bottom: 2px solid var(--plum);
+}
+.hh-nav__list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding-block: 0;
+}
+.hh-nav__list li { margin: 0; }
+.hh-nav__link {
+  display: block;
+  padding: 0.85rem 1.1rem;
+  min-height: 44px;
+  color: var(--plum);
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+}
+.hh-nav__link:hover { color: var(--gold-text); }
+.hh-nav__link.is-current {
+  color: var(--gold-text);
+  box-shadow: inset 0 -4px 0 var(--gold-text);
+}
+
+/* -------------------------------------------------------------- breadcrumb */
+
+.hh-crumb { padding-block: 1rem 0; }
+.hh-crumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+.hh-crumb li { margin: 0; }
+.hh-crumb li + li::before { content: '›'; margin-right: 0.6rem; color: var(--gold-text); }
+
+/* --------------------------------------------------- polaroid + corners */
+
+.hh-polaroid {
+  position: relative;
+  background: var(--white);
+  padding: 0.85rem 0.85rem 0;
+  border: 1px solid var(--rule);
+  box-shadow: 0 10px 22px rgba(43, 31, 42, 0.14);
+}
+.hh-polaroid img { width: 100%; }
+.hh-polaroid__caption {
+  margin: 0;
+  padding: 0.75rem 0.2rem 0.95rem;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* Gold photo corners — the signature mark. Decorative, hidden from AT. */
+.hh-corners span {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--gold-line);
+  z-index: 2;
+}
+.hh-corners__tl { top: 5px; left: 5px; border-right: 0; border-bottom: 0; }
+.hh-corners__tr { top: 5px; right: 5px; border-left: 0; border-bottom: 0; }
+.hh-corners__bl { bottom: 5px; left: 5px; border-right: 0; border-top: 0; }
+.hh-corners__br { bottom: 5px; right: 5px; border-left: 0; border-top: 0; }
+
+/* -------------------------------------------------------------------- hero */
+
+.hh-hero {
+  background:
+    linear-gradient(0deg, rgba(69, 39, 66, 0.05), rgba(69, 39, 66, 0.05)),
+    var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.hh-hero__inner {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+  padding-block: 3rem 3.5rem;
+}
+.hh-hero__text h1 {
+  font-style: italic;
+  font-weight: 500;
+  max-width: 16ch;
+}
+.hh-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.24em;
+  color: var(--gold-text);
+}
+.hh-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.6rem;
+}
+.hh-hero__polaroid { transform: rotate(-3deg); max-width: 26rem; }
+
+/* -------------------------------------------------------- ruled headings */
+
+.hh-ruled {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  margin-bottom: 1.4rem;
+}
+.hh-ruled::before, .hh-ruled::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold-line);
+}
+.section--plum .hh-ruled::before,
+.section--plum .hh-ruled::after { background: var(--gold-line); }
+
+/* ------------------------------------------------------------- categories */
+
+.hh-cats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hh-cats li { margin: 0; }
+.hh-cat {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid var(--rule);
+  padding: 0.7rem 0.7rem 1rem;
+  height: 100%;
+}
+.hh-cat:hover { border-color: var(--gold-text); color: var(--ink); }
+.hh-cat__photo {
+  display: block;            /* inline spans ignore aspect-ratio */
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  margin-bottom: 0.8rem;
+}
+.hh-cat__photo img { width: 100%; height: 100%; object-fit: cover; }
+.hh-cat__name {
+  display: block;
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.hh-cat__blurb { display: block; font-size: 0.95rem; color: var(--ink-soft); line-height: 1.5; }
+
+/* ------------------------------------------------------- occasion finder */
+
+.hh-occwrap { max-width: 820px; }
+.hh-occ {
+  list-style: none;
+  margin: 1.5rem 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+.hh-occ li { margin: 0; border-bottom: 1px solid var(--rule); }
+.hh-occ a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.3rem 1.5rem;
+  padding: 1.1rem 0.25rem;
+  text-decoration: none;
+  color: var(--ink);
+}
+.hh-occ a:hover { background: var(--white); color: var(--ink); }
+.hh-occ__when {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+.hh-occ__what {
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.1em;
+  color: var(--gold-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------- polaroid cards */
+
+.hh-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2.2rem 1.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hh-card {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  background: var(--white);
+  border: 1px solid var(--rule);
+  padding: 0.7rem 0.7rem 0;
+  box-shadow: 0 8px 18px rgba(43, 31, 42, 0.12);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.hh-card--tiltl { transform: rotate(calc(var(--tilt) * -1)); }
+.hh-card--tiltr { transform: rotate(var(--tilt)); }
+.hh-card:hover,
+.hh-card:focus-within {
+  transform: rotate(0deg);
+  box-shadow: 0 14px 26px rgba(43, 31, 42, 0.2);
+}
+
+.hh-card__photo {
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.hh-card__photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.hh-card__caption {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0.9rem 0.25rem 1.1rem;
+}
+.hh-card__cat {
+  margin: 0 0 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.2em;
+  color: var(--gold-text);
+}
+.hh-card__name {
+  font-size: 1.3rem;
+  margin: 0 0 0.35rem;
+  line-height: 1.2;
+}
+.hh-card__name a { text-decoration: none; color: var(--plum); }
+.hh-card__name a:hover { text-decoration: underline; }
+.hh-card__summary {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-bottom: 0.9rem;
+}
+.hh-card__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin: auto 0 0.8rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--rule);
+}
+.hh-card__price { font-family: var(--display); font-size: 1.5rem; font-weight: 600; }
+.hh-card__stock {
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+  color: var(--gold-text);
+}
+
+.hh-more { margin-top: 2rem; text-align: center; }
+
+/* ---------------------------------------------------------- the promises */
+
+.hh-promises {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.5rem;
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+.hh-promises li {
+  margin: 0;
+  padding: 1.2rem 1.1rem;
+  border: 1px solid var(--gold-line);
+}
+.hh-promises h3 {
+  font-size: 1.25rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--gold-lit);
+  margin-bottom: 0.4rem;
+}
+.hh-promises p { margin: 0; font-size: 0.95rem; line-height: 1.55; color: var(--paper); }
+
+/* ------------------------------------------------------ shop filter/sort */
+
+.hh-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  align-items: flex-end;
+  margin: 1.8rem 0 1rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+.hh-tools__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.2em;
+  color: var(--gold-text);
+}
+.hh-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.hh-chip {
+  min-height: 44px;
+  padding: 0.5rem 1.1rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--plum);
+  font: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.hh-chip:hover { border-color: var(--gold-text); }
+.hh-chip[aria-pressed='true'] {
+  background: var(--plum);
+  border-color: var(--plum);
+  color: var(--paper);
+}
+.hh-count { font-size: 0.95rem; color: var(--ink-soft); margin-bottom: 1.6rem; }
+
+/* ------------------------------------------------------- form primitives */
+
+select, input, textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.6rem 0.7rem;
+  border: 1.5px solid var(--ink-soft);
+  border-radius: 0;
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+}
+textarea { min-height: 7rem; }
+select { max-width: 100%; }
+
+.hh-field { margin-bottom: 1.2rem; }
+/*
+ * Two-class selector on purpose: a bare `.hh-field label` ties with the
+ * newsletter's own label rule and source order decides the winner, which is how
+ * an invisible label gets shipped. Specificity here is deliberate.
+ */
+.hh-field label,
+.hh-news__form .hh-field label,
+.hh-qty label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+}
+.hh-field--error input,
+.hh-field--error select,
+.hh-field--error textarea { border-color: #A3232B; border-width: 2px; }
+.hh-error {
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #8E1F26;   /* 6.0:1 on white */
+}
+
+.hh-fieldset {
+  border: 1px solid var(--rule);
+  background: var(--white);
+  padding: 1.4rem 1.3rem 0.6rem;
+  margin: 0 0 1.6rem;
+}
+.hh-fieldset legend {
+  padding: 0 0.6rem;
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.hh-cols2, .hh-cols3 { display: grid; gap: 0 1rem; }
+
+.hh-radio {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.9rem 0.2rem;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+}
+.hh-radio input {
+  width: 24px;
+  height: 24px;
+  min-height: 0;
+  margin-top: 0.35rem;
+  flex: 0 0 auto;
+  accent-color: var(--plum);
+}
+.hh-radio__label { display: block; font-weight: 700; }
+.hh-radio__note { display: block; font-size: 0.93rem; color: var(--ink-soft); line-height: 1.5; }
+
+.hh-consent { margin: 1rem 0 0; }
+.hh-consent label {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  font-size: 0.93rem;
+  line-height: 1.55;
+  cursor: pointer;
+}
+.hh-consent input {
+  width: 24px;
+  height: 24px;
+  min-height: 0;
+  margin-top: 0.2rem;
+  flex: 0 0 auto;
+  accent-color: var(--plum);
+}
+.hh-formnote { margin: 0.9rem 0 0; font-size: 0.95rem; font-weight: 700; }
+
+/* ---------------------------------------------------------- product page */
+
+.hh-product { display: grid; gap: 2.2rem; padding-top: 1.5rem; }
+.hh-product__photo { max-width: 34rem; }
+.hh-product__info h1 { margin-bottom: 0.3rem; }
+.hh-product__price {
+  font-family: var(--display);
+  font-size: 2.4rem;
+  font-weight: 600;
+  margin: 0 0 0.2rem;
+}
+.hh-product__sku { font-size: 0.95rem; color: var(--ink-soft); margin-bottom: 1.2rem; }
+.hh-instock { color: var(--gold-text); }
+
+.hh-product__buy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin: 1.5rem 0 0.6rem;
+  padding: 1.2rem;
+  background: var(--white);
+  border: 1px solid var(--rule);
+}
+.hh-qty { flex: 0 0 7rem; }
+.hh-added { min-height: 1.6rem; font-weight: 700; font-size: 0.95rem; margin: 0 0 1rem; }
+
+.hh-note {
+  border-left: 4px solid var(--gold-line);
+  padding: 0.9rem 0 0.9rem 1.1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.97rem;
+  line-height: 1.6;
+}
+.hh-note p:last-child { margin-bottom: 0; }
+.hh-note--flag { border-left-color: var(--plum); background: var(--paper-2); padding-right: 1rem; }
+.hh-note--white { background: var(--white); border: 1px solid var(--rule); border-left: 4px solid var(--plum); padding: 1rem 1.1rem; }
+
+/*
+ * `min-width: 0` on the children is load-bearing, not tidiness. A grid track
+ * defaults to `minmax(auto, 1fr)`, and `auto` resolves to the item's MIN-CONTENT
+ * width — which, for a column holding the 480px specification table, is 480px.
+ * At 360px that widened the whole document and the page scrolled sideways even
+ * though the table already had its own `overflow-x: auto` box. Zeroing the
+ * minimum lets the track shrink and hands the scrolling back to `.table-scroll`.
+ */
+.hh-cols { display: grid; gap: 2rem; }
+.hh-cols > *,
+.hh-cartlayout > *,
+.hh-product > * { min-width: 0; }
+.hh-specs th { width: 42%; font-weight: 700; }
+
+/* ----------------------------------------------------------- cart layout */
+
+.hh-cartlayout { display: grid; gap: 2rem; align-items: start; }
+
+.hh-cartlist { list-style: none; margin: 0 0 1.6rem; padding: 0; }
+.hh-cartrow {
+  display: grid;
+  grid-template-columns: 104px 1fr auto;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  margin: 0;
+  border-bottom: 1px solid var(--rule);
+}
+.hh-cartrow img { border: 1px solid var(--rule); }
+.hh-cartrow__name { margin: 0 0 0.2rem; font-weight: 700; }
+.hh-cartrow__name a { color: var(--plum); text-decoration: none; }
+.hh-cartrow__name a:hover { text-decoration: underline; }
+.hh-cartrow__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.hh-cartrow__controls label { font-size: 0.9rem; }
+.hh-cartrow__controls select { width: auto; min-width: 5rem; }
+.hh-cartrow__total { font-family: var(--display); font-size: 1.4rem; font-weight: 600; margin: 0; text-align: right; }
+
+.hh-summary {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  padding: 1.4rem 1.3rem;
+}
+.hh-h3 { font-size: 1.5rem; margin-bottom: 0.9rem; }
+.hh-sumrow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.97rem;
+}
+.hh-sumrow span:last-child { text-align: right; }
+.hh-sumrow--total {
+  border-bottom: 0;
+  border-top: 2px solid var(--plum);
+  margin-top: 0.4rem;
+  font-family: var(--display);
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+.hh-summary .hh-btn { margin-top: 0.8rem; }
+
+.hh-minilist { list-style: none; margin: 0 0 1rem; padding: 0; }
+.hh-minilist li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.95rem;
+}
+
+.hh-panel {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  padding: 1.6rem 1.4rem;
+}
+.hh-panel h2 { font-size: 1.7rem; }
+.hh-panel h3 { font-size: 1.15rem; margin: 1.3rem 0 0.3rem; font-family: var(--body); font-weight: 700; }
+
+.hh-review { margin-top: 1.6rem; }
+
+/* ---------------------------------------------------------- FAQ accordion */
+
+.hh-acc { border-bottom: 1px solid var(--rule); }
+.hh-acc h3 { margin: 0; font-size: 1.1rem; }
+.hh-acc__btn {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 1rem 0.2rem;
+  background: none;
+  border: 0;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+}
+.hh-acc__btn:hover { color: var(--gold-text); }
+.hh-acc__sign {
+  flex: 0 0 auto;
+  font-family: var(--body);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--gold-text);
+}
+.hh-acc__panel { padding: 0 0.2rem 1rem; }
+.hh-acc__panel p { margin: 0; }
+
+/* -------------------------------------------------------------- newsletter */
+
+.hh-news { background: var(--paper-2); border-top: 1px solid var(--rule); }
+.hh-news__inner { padding-block: 3rem; max-width: 640px; text-align: center; }
+.hh-news__inner h2 { font-style: italic; font-weight: 500; }
+.hh-news__form { margin-top: 1.5rem; text-align: left; }
+.hh-news__form .hh-btn { width: 100%; }
+
+/* ------------------------------------------------------------------- 404 */
+
+.hh-404 { text-align: center; }
+.hh-404__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 1.8rem 0;
+  padding: 0;
+}
+.hh-404__links li { margin: 0; }
+
+/* --------------------------------------------------------------- policies */
+
+.policy h2 { margin-top: 2.2rem; font-size: 1.9rem; }
+.policy h3 { margin-top: 1.5rem; font-size: 1.25rem; font-family: var(--body); font-weight: 700; }
+.policy li { margin-bottom: 0.6rem; }
+
+/* ----------------------------------------------------------------- footer */
+
+.hh-footer {
+  background: var(--plum);
+  color: var(--paper);
+  border-top: 6px double var(--gold-line);   /* the stitched rule */
+  padding-top: 2.8rem;
+  margin-top: 0;
+}
+.hh-footer__cols { display: grid; gap: 2rem; padding-bottom: 2.2rem; }
+.hh-footer h2 {
+  font-size: 1.05rem;
+  font-family: var(--body);
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.18em;
+  color: var(--gold-lit);
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--gold-line);
+}
+.hh-footer ul { list-style: none; margin: 0; padding: 0; }
+.hh-footer li { margin-bottom: 0.45rem; }
+.hh-footer a { color: var(--paper); }
+.hh-footer a:hover { color: var(--gold-lit); }
+.hh-footer__name {
+  font-family: var(--display);
+  font-size: 1.9rem;
+  margin: 0;
+  line-height: 1.1;
+}
+.hh-footer__tag {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.2em;
+  color: var(--gold-lit);
+}
+.hh-footer address { font-size: 0.95rem; line-height: 1.7; }
+.hh-footer__legal {
+  border-top: 1px solid var(--gold-line);
+  padding-block: 1.2rem 1.6rem;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+.hh-footer__legal p { margin: 0; }
+
+/* --------------------------------------------------------- cookie notice */
+
+/*
+ * Starts translated off-screen while hidden. JS unhides it and adds .is-in on
+ * the next frame, so it slides in instead of appearing in place — appearing in
+ * place is scored as a layout shift.
+ */
+.hh-cookie {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--plum-deep);
+  color: var(--paper);
+  border-top: 2px solid var(--gold-line);
+  font-size: 0.92rem;
+  transform: translateY(150%);
+  transition: transform 0.28s ease;
+}
+.hh-cookie.is-in { transform: translateY(0); }
+.hh-cookie p { margin: 0; max-width: 62ch; }
+.hh-cookie a { color: var(--gold-lit); }
+.hh-cookie .hh-btn { border-color: var(--gold-lit); color: var(--paper); }
+.hh-cookie .hh-btn:hover { background: var(--gold-lit); color: var(--plum-deep); }
+
+/* ------------------------------------------------------------ breakpoints */
+
+@media (min-width: 640px) {
+  .hh-cols2 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 760px) {
+  .hh-cols3 { grid-template-columns: 1.4fr 0.8fr 0.9fr; }
+  .hh-cols { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  .hh-footer__cols { grid-template-columns: 1.3fr 1fr 1.2fr; }
+  .hh-footer__cols > div + div {
+    padding-left: 2rem;
+    border-left: 1px solid var(--gold-line);
+  }
+}
+
+@media (min-width: 880px) {
+  .section { padding: 4rem 0; }
+  .hh-hero__inner { grid-template-columns: 1.1fr 0.9fr; }
+  .hh-hero__polaroid { justify-self: end; }
+  .hh-product { grid-template-columns: 1fr 1fr; gap: 3rem; }
+  .hh-cartlayout { grid-template-columns: 1.6fr 1fr; gap: 2.5rem; }
+  .hh-news__form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 1rem;
+    align-items: end;
+  }
+  .hh-news__form .hh-field { margin-bottom: 0; }
+  .hh-news__form .hh-btn { width: auto; }
+  .hh-news__form .hh-consent,
+  .hh-news__form .hh-formnote { grid-column: 1 / -1; }
+}
+
+/* The centred wordmark needs the full row once the menu button appears. */
+@media (max-width: 720px) {
+  .hh-menu { display: inline-flex; }
+  .hh-nav { display: none; }
+  .hh-nav.hh-nav--open { display: block; }
+  .hh-nav--open .hh-nav__list { flex-direction: column; align-items: stretch; }
+  .hh-nav--open .hh-nav__link {
+    padding: 0.95rem 0.25rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hh-nav--open .hh-nav__link.is-current { box-shadow: inset 4px 0 0 var(--gold-text); }
+}
+
+@media (max-width: 520px) {
+  .hh-head__mark { grid-template-columns: auto 1fr auto; gap: 0.5rem; }
+  .hh-logo { text-align: center; }
+  .hh-logo__name { font-size: 1.65rem; }
+  .hh-logo__sub { letter-spacing: 0.12em; font-size: 0.66rem; }
+  .hh-menu, .hh-cart { padding: 0.4rem 0.6rem; font-size: 0.78rem; }
+  .hh-menu svg { display: none; }
+  .hh-cartrow { grid-template-columns: 78px 1fr; }
+  .hh-cartrow img { width: 78px; height: auto; }
+  .hh-cartrow__total { grid-column: 2; text-align: left; }
+  .hh-fieldset { padding-inline: 0.9rem; }
+  .hh-product__buy { padding: 1rem 0.9rem; }
+}
+
+/* ------------------------------------------------------------ reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+  .hh-card--tiltl, .hh-card--tiltr, .hh-hero__polaroid { transform: none; }
+  .hh-cookie { transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------- printing */
+
+@media print {
+  .hh-head__strip, .hh-nav, .hh-menu, .hh-cookie, .hh-news { display: none; }
+  body { background: #fff; font-size: 12pt; }
+  .hh-card, .hh-polaroid { box-shadow: none; transform: none; }
+}

@@ -1,0 +1,94 @@
+{
+  "storeName": "Heirloom Hollow Gifts",
+  "type": "html",
+  "pagesGlob": "**/*.html",
+  "scanGlobs": [
+    "**/*.html",
+    "assets/css/*.css",
+    "assets/js/*.js",
+    "robots.txt",
+    "sitemap.xml"
+  ],
+  "expectedPages": [
+    "index.html",
+    "shop.html",
+    "cart.html",
+    "checkout.html",
+    "about.html",
+    "contact.html",
+    "faq.html",
+    "credits.html",
+    "404.html",
+    "policies/privacy.html",
+    "policies/terms.html",
+    "policies/refund-returns.html",
+    "policies/shipping.html",
+    "policies/accessibility.html",
+    "products/tell-me-your-story-memory-journal.html",
+    "products/parlour-retro-style-tabletop-radio.html",
+    "products/hollow-lane-10-inch-digital-photo-frame.html",
+    "products/engraved-keepsake-box-walnut.html",
+    "products/large-print-wall-calendar-12-month.html",
+    "products/family-tree-print-16x20.html",
+    "products/linen-photo-album-200-pockets.html",
+    "products/grandchildren-recipe-keeper-book.html",
+    "products/pressed-flower-letter-set.html",
+    "products/brass-pocket-magnifier-with-case.html",
+    "products/hollow-hearth-beeswax-candle-trio.html",
+    "products/memory-lane-conversation-card-deck.html",
+    "robots.txt",
+    "sitemap.xml",
+    "favicon.svg"
+  ],
+  "business": {
+    "legalName": "Heirloom Hollow Gifts LLC",
+    "address": "88 Harbor Lantern Way, Suite 12, Portland, ME 04101",
+    "email": "hello@heirloomhollow.com",
+    "phone": "(207) 555-0155",
+    "hours": "Mon–Fri, 9:00 AM–5:00 PM ET",
+    "effectiveDate": "September 3, 2026",
+    "siteUrl": "https://www.heirloomhollow.com"
+  },
+  "terms": {
+    "returnWindow": "45 days",
+    "freeShippingOver": "$55",
+    "standardShipping": "$5.95",
+    "processing": "1–2 business days",
+    "delivery": "4–6 business days",
+    "expedited": "$13.95"
+  },
+  "footerRequired": [
+    "address",
+    "email",
+    "phone"
+  ],
+  "termPages": [
+    "policies/refund-returns.html",
+    "policies/shipping.html",
+    "faq.html"
+  ],
+  "catalogueSources": {
+    "data": "_generator/data/products.js",
+    "runtime": "assets/js/main.js"
+  },
+  "allow": [
+    "no customer reviews yet",
+    "we will not publish a review",
+    "we do not buy, incentivise or write reviews",
+    "there are no star ratings on this site",
+    "inventing reviews is both dishonest",
+    "rule on consumer reviews",
+    "testimonial or a review without asking",
+    "we do not use placeholder text as a label",
+    "we do not use &ldquo;best&rdquo;",
+    "we have not won anything and neither has the journal",
+    "medical outcomes or treatment",
+    "nothing in this shop is a medical or assistive",
+    "not an optical aid for any condition",
+    "not a treatment for anything",
+    "we make no claim that any of them improves memory",
+    "we do not claim any of it improves a memory",
+    "is not a medical or assistive device"
+  ],
+  "_allow_note": "Every entry is a line of copy that DENIES a claim rather than making one — the memory-journal disclaimer, the magnifier disclaimer, and the review-integrity statements Google Ads and 16 CFR Part 465 want a gift shop to carry. The scanner matches the forbidden word inside the denial of that word. Nothing here silences a real finding."
+}
